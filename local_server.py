@@ -1,11 +1,27 @@
 from ntpq_server import ntpq_server
+import re
 import subprocess
 
 class local_server(ntpq_server):
     """local_server extends the base ntpq_server class with methods for updating a local server. It contains methods for:
-    1. Updating the status (offset, when, jitter) of the individual server.
-    2. Finding the name of the server in the /etc/hosts file.
+    1. Call the parents init method and find the name of the server.
+    2. Updating the status (offset, when, jitter) of the individual server.
     """
+    
+    def __init__(self, ip_address="0.0.0.0"):
+        """Will call parents __init__ class. Will also add a name to the object."""
+        
+        ntpq_server.__init__(self, ip_address)  # Call parents init server to populate all fields
+        
+        # Find a name from /etc/hosts
+        hosts_output = subprocess.check_output(['cat', '/etc/hosts'])   
+        regex = r'{0}\s+(\S+)'.format(self.ip_address)  # Find the name corresponding to the ip address.
+        try:
+            self.name = re.search(regex, hosts_output).group(1) # If the name is found it is saved
+            return
+        except:
+            self.name = self.ip_address # If no name is found the ip address is put in it's place
+            return
     
     def update(self):
         """update() will extract the important information (offset, when and jitter) from the ntpq_output.
@@ -19,18 +35,5 @@ class local_server(ntpq_server):
         ntpq_server.update(self, ntpq_output, self.ip_address)
         
         # Find the name given from the /etc/hosts file.
-        self.find_name()
-        return
-    
-    def find_name(self):
-        """Will search the /etc/hosts file for a name of the ip address in use. Populates the objects name field.
-        """
-        hosts_output = subprocess.check_output(['cat', '/etc/hosts'])
-        regex = r'{0}\s+(\S+)'.format(self.ip_address)
-        try:
-            self.name = re.search(regex, hosts_output).group(1)
-            return
-        except:
-            self.name = self.ip_address
-            return
-    
+        #self.find_name()
+        return  

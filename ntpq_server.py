@@ -11,9 +11,9 @@ class ntpq_server():
     Subclasses of ntpq_server will be created to fit both local and remote popuplation.
     """
     
-    def __init__(self, name="name", ip_address="0.0.0.0"):
+    def __init__(self, ip_address="0.0.0.0"):
         """Initializing the generic ntpq_server"""
-        self.name = name
+        self.name = ""
         self.ip_address = ip_address
         self.offset = 0.0
         self.when = 0.0
