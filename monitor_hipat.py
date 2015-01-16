@@ -10,6 +10,7 @@
 
 from local_server import local_server
 from remote_server import remote_server
+from config import config
 import datetime
 import subprocess
 import re
@@ -18,22 +19,21 @@ import os
 
 """monitor_hipat.py will create an overview over the status of the hipat system."""
         
-def find_servers(remote = True):
+def find_servers(remote_status = "remote"):
     """Gets input from ntpq and returns a list of all the ip addresses."""
     
-    if remote:
+    if remote_status == "remote":
         print "We have a remote server"
-    elif not remote:
-        print "not remote"
+    elif remote_status == "local":
         ntpq_output = subprocess.check_output(['ntpq', '-pn'])
         regex = r'^.(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # Start of line, one character and ip address
         server_ips = re.findall(regex, ntpq_output, re.MULTILINE)
     
     server_objects = []
     for server in server_ips:
-        if remote:
+        if remote_status == "remote":
             print "remote"
-        elif not remote:
+        elif remote_status == "local":
             server_instance = local_server(ip_address=server)
         server_objects.append(server_instance)
     
@@ -77,9 +77,8 @@ def print_servers(server_list):
         
         
 def main():
-    
     # Get a list of servers
-    server_list = find_servers(remote = False)
+    server_list = find_servers(remote_status = config["remote_status"])
     
     while(True):
         for server in server_list:
