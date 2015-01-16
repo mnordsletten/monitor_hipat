@@ -12,6 +12,7 @@ class local_server(ntpq_server):
         """Will call parents __init__ class. Will also add a name to the object."""
         
         ntpq_server.__init__(self, ip_address)  # Call parents init server to populate all fields
+        self.remote = False                     # Set remote field to false
         
         # Find a name from /etc/hosts
         hosts_output = subprocess.check_output(['cat', '/etc/hosts'])   

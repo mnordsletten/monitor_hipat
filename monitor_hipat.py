@@ -5,7 +5,6 @@
 # ping test to remote sites to check complete status if they don't respond to ntpq -p
 # Can find_servers be split up further? At least we need to expand it to find remote servers from config.txt as well.
 # print_servers needs coloured text, not backgrounds.
-# Can find_name be improved in local_server, this is very specialised for this function.
 # general function descriptions needed for remote servers. 
 # Move first part of main function (to make server_list) to find_servers. 
 
@@ -19,14 +18,26 @@ import os
 
 """monitor_hipat.py will create an overview over the status of the hipat system."""
         
-def find_servers():
+def find_servers(remote = True):
     """Gets input from ntpq and returns a list of all the ip addresses."""
     
-    ntpq_output = subprocess.check_output(['ntpq', '-pn'])
-    regex = r'^.(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # Start of line, one character and ip address
-    server_list = re.findall(regex, ntpq_output, re.MULTILINE)
+    if remote:
+        print "We have a remote server"
+    elif not remote:
+        print "not remote"
+        ntpq_output = subprocess.check_output(['ntpq', '-pn'])
+        regex = r'^.(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # Start of line, one character and ip address
+        server_ips = re.findall(regex, ntpq_output, re.MULTILINE)
     
-    return server_list 
+    server_objects = []
+    for server in server_ips:
+        if remote:
+            print "remote"
+        elif not remote:
+            server_instance = local_server(ip_address=server)
+        server_objects.append(server_instance)
+    
+    return server_objects 
 
 def print_servers(server_list):
     """Will print the server objects represented in the server_list.
@@ -66,11 +77,9 @@ def print_servers(server_list):
         
         
 def main():
-    ntpq_servers = find_servers()
-    server_list = []
-    for server in ntpq_servers:
-        server_object = local_server(ip_address=server)
-        server_list.append(server_object)
+    
+    # Get a list of servers
+    server_list = find_servers(remote = False)
     
     while(True):
         for server in server_list:
@@ -78,10 +87,6 @@ def main():
         os.system('cls' if os.name == 'nt' else 'clear')
         print_servers(server_list)
         time.sleep(20)
-        
-    ###TO DO
-    # Sort print list by status. Last failed at the top
-
         
 if __name__ == '__main__':
     main()
