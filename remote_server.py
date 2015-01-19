@@ -5,4 +5,4 @@ class remote_server(ntpq_server):
     
     """
     
-    test = "Forandringer skjer her"
+    test = "hey there"
