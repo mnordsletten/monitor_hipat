@@ -1,0 +1,19 @@
+### Config file for monitor_hipat.py
+# Two things are configure in this file
+# 1. Remote or local status (remote_status)
+# 2. Ip address of the reference server (ref_ip_address)
+# 3. A voluntary number of ip addresses and names to monitor, format to use: ipaddress:name (ip_address)
+#
+# The following format is used:
+# <config_item>: <value>
+#
+# Examples given:
+# remote_status: remote
+# ref_ip_address: 1.2.3.4
+# ip_address: 11.22.33.44:name1
+
+remote_status: local
+ref_ip_address: 10.0.0.1
+ip_address: 11.22.33.44:name1
+ip_address: 22.33.44.55:name2
+
