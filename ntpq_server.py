@@ -95,6 +95,8 @@ class ntpq_server():
             self.when = float(when_output[:-1]) * 3600
         elif when_output[-1] == 'd':                    # 'd' = days
             self.when = float(when_output[:-1]) * 86400
+        else:
+        	self.when = float(when_output) 				# already in seconds
         
         # Lastly we set the status of the object
         self.find_status()
