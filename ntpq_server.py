@@ -1,5 +1,6 @@
 import datetime
 import re
+from config import config
 
 class ntpq_server():
     """This file contains the class ntpq_server. This is a class that contains information about the remote site. 
@@ -53,10 +54,10 @@ class ntpq_server():
             
         return
     
-    def update(self, ntpq_output, ip_address = "158.112.116.8"):
+    def update(self, ntpq_output, ip_address = config["ref_ip_address"]):
         """update() will extract the important information (offset, when and jitter) from the ntpq_output.
         If there are multiple lines in the output the server specified by ip_address is chosen. The default server 
-        is the ip address of the reference. -> CHANGE TO READ FROM CONFIG <-
+        is the ip address of the reference, this is read from the config.
         
         ntpq_output = The input to be analyzed, can be multiple lines. Ip addresses must be specified "ntpq -pn"
         ip_address = If there are multiple lines in the input the ip address of the server requested must be specified.
