@@ -27,14 +27,12 @@ class local_server(ntpq_server):
     def update(self):
         """update() will extract the important information (offset, when and jitter) from the ntpq_output.
         From a local server the ntpq output is gathered from a 'ntpq -pn' query. To insert the information in the object
-        the parents update function is called. To get names of the servers another local_server method is used.
+        the parents update function is called.
         """
         # Gather ntpq_output from the local machine
         ntpq_output = subprocess.check_output(['ntpq', '-pn'])  # Get local ntpq output
         
         # Populate the object with the info from the ntpq_output
         ntpq_server.update(self, ntpq_output, self.ip_address)
-        
-        # Find the name given from the /etc/hosts file.
-        #self.find_name()
+
         return  
