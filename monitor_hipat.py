@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-
+# VERSION 2.0
 # TO DO
-# subprocesses to call ntpq -p to remote sites
 # ping test to remote sites to check complete status if they don't respond to ntpq -p
-# Can find_servers be split up further? At least we need to expand it to find remote servers from config.txt as well.
-# print_servers needs coloured text, not backgrounds.
-# general function descriptions needed for remote servers. 
-# Move first part of main function (to make server_list) to find_servers. 
 
 from local_server import local_server
 from remote_server import remote_server
@@ -17,11 +12,15 @@ import re
 import time
 import os
 
-"""monitor_hipat.py will create an overview over the status of the hipat system."""
+"""	monitor_hipat.py will create an overview over the status of the hipat system.
+"""
         
 def find_servers():
-    """Gets input from ntpq and returns a list of all the ip addresses."""
+    """ Finds out of the server is either remote or local. Then based on the result, makes a list of IP-addresses. 
+    server_objects are created from the IP-adresses and returned as a list. 
     
+    returns: list of server objects
+	"""
     if config["remote_status"] == "remote":
         server_ips = config['ip_address']
     elif config["remote_status"] == "local":
@@ -41,7 +40,6 @@ def find_servers():
 
 def print_servers(server_list):
     """Will print the server objects represented in the server_list.
-    
     server_list: list containing the ntpq_server objects.
     """ 
     server_list.sort(key=lambda y: y.last_fail, reverse=True)
@@ -74,8 +72,6 @@ def print_servers(server_list):
         background_colour_end = "\033[0m"
         print "{0.name:<20}{2}{0.status:<8}{3}{0.offset:<8}{0.when:<10}{1:<14}{0.ip_address}".format(server, last_fail_string, background_colour, background_colour_end)
 
-        
-        
 def main():
     # Get a list of servers
     server_list = find_servers()
@@ -87,8 +83,4 @@ def main():
         print_servers(server_list)
         time.sleep(20)
         
-if __name__ == '__main__':
-    main()
-        
-        
-        
+if __name__ == '__    
