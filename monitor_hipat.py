@@ -83,4 +83,5 @@ def main():
         print_servers(server_list)
         time.sleep(20)
         
-if __name__ == '__    
+if __name__ == '__main__':
+    main()
