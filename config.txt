@@ -12,7 +12,7 @@
 # ref_ip_address: 1.2.3.4
 # ip_address: 11.22.33.44:name1
 
-remote_status: local
+remote_status: remote
 ref_ip_address: 10.0.0.1
 ip_address: 11.22.33.44:name1
 ip_address: 22.33.44.55:name2
