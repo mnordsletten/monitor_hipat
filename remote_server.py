@@ -24,4 +24,4 @@ class remote_server(ntpq_server):
         # Populate the object with the info from the ntpq_output
         ntpq_server.update(self, ntpq_output)
         
-        return  
+        return         
