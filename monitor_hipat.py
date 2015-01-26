@@ -22,7 +22,7 @@ def find_servers():
     returns: list of server objects
 	"""
     if config["remote_status"] == "remote":
-        server_ips = config['ip_address']
+        server_ips = config['ip_address']   # List of lists containing server_ip and server_name
     elif config["remote_status"] == "local":
         ntpq_output = subprocess.check_output(['ntpq', '-pn'])
         regex = r'^.(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'   # Start of line, one character and ip address
