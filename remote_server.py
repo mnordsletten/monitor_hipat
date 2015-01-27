@@ -12,13 +12,15 @@ class remote_server(ntpq_server):
     	self.name = name # Set name
     	
     	 
-    def update(self):
+    def update(self, ntpq_output = False):
         """ update() will extract the important information (offset, when and jitter) from the ntpq_output.
+        A different source for the ntpq_output can be given, but the default way is to perform a 'ntpq -pn' check. 
         From a remote server the ntpq output is gathered from a 'ntpq -pn <ip_address>' query. To insert the information in the object
         the parents update function is called. 
         """
-        # Gather ntpq_output from the remote machine
-        ntpq_output = subprocess.check_output(['ntpq', '-pn', self.ip_address])  # Get remote ntpq output
+        # If ntpq_output is not provided as an input argument it is found here
+        if not ntpq_output:
+            ntpq_output = subprocess.check_output(['ntpq', '-pn', self.ip_address])  # Get remote ntpq output
         
         # Populate the object with the info from the ntpq_output
         ntpq_server.update(self, ntpq_output)
