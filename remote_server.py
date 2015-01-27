@@ -26,5 +26,6 @@ class remote_server(ntpq_server):
         	
         else: # If valid, Populate the object with the info from the ntpq_output
         	ntpq_server.update(self, ntpq_output)
+        	print ntpq_server.update(self, ntpq_output, '127.127.20.0', True)
         
         return         
