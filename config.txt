@@ -16,5 +16,4 @@ remote_status: remote
 ref_ip_address: 10.0.0.1
 ip_address: 11.22.33.44:name1
 ip_address: 22.33.44.55:name2
-ip_address: 33.44.55.66:name3
 
