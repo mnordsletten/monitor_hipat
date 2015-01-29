@@ -1,20 +1,18 @@
 import subprocess, threading
-from config import config
-from remote_server import remote_server
 
 """Will perform an update of the remote sites using threading. 
-    1. Ping remote sites if they don't respond. 
-    2. Perform ntpq -pn <ip_address> requests to remote sites.
-    3. Update the remote_server objects with updated information."""
+    1. Update the remote_server objects with updated information."""
     
-class Command():
-    def __init__(self, cmd):
-        self.cmd = cmd
-        self.process = None
-    
-    server_objects = []
-    for server in config['ip_address']:
-        server_instance = remote_server(ip_address = server[0], name = server[1])
-        server_objects.append(server_instance)
+class myThread(threading.Thread):
+    def __init__(self, server_object):
+        """The server object is made part of the Thread object.
+        """
+        threading.Thread.__init__(self)
+        self.server_object = server_object
+        return
         
+    def run(self):
+        """The server_objects update function is called."""  
+        self.server_object.update()
+        return        
     
