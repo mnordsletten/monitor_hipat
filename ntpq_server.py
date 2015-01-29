@@ -20,6 +20,9 @@ class ntpq_server():
         self.when = 0.0
         self.jitter = 0.0
         self.status = "Init"
+        self.status = 0
+        self.hipat_status = 0
+        self.net_status = 0
         self.remote = True  # False if it is a local ntp measurement
         self.last_fail = datetime.datetime.min
         
@@ -54,7 +57,7 @@ class ntpq_server():
             
         return
     
-    def update(self, ntpq_output, ip_address = config["ref_ip_address"]):
+    def update(self, ntpq_output, ip_address = config["ref_ip_address"], cesium_reach = False):
         """update() will extract the important information (offset, when and jitter) from the ntpq_output.
         If there are multiple lines in the output the server specified by ip_address is chosen. The default server 
         is the ip address of the reference, this is read from the config.
@@ -83,6 +86,8 @@ class ntpq_server():
             self.offset = float(regex_results.group('offset'))  # The offset value is converted to float and saved
             self.jitter = float(regex_results.group('jitter'))  # The jitter value is converted to float and saved
             when_output = regex_results.group('when')           # when_output is easier to work with
+            if cesium_reach:
+            	return int(regex_results.group('reach')) 		# Special occurance where reach is needed
         except IndexError:                                      # If an argument is not found in the regex results.
             print "Offset not found in ntpq_output"
         

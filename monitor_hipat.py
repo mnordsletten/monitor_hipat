@@ -63,7 +63,7 @@ def print_servers(server_list):
         # Will modify the background colour of the text based on the status used. Confirmed to work on a Mac
         if server.status == "Green":
             background_colour = "\033[30;42m"   # Black text (30) on Green background (42)
-        elif server.status == "Red":
+        elif server.status == "Red" or "Net fail" or "HiPATfail":
             background_colour = "\033[41m"      # Red background (41)
         elif server.status == "Yellow":
             background_colour = "\033[30;43m"   # Black text (30) on Yellow Background (43)

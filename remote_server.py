@@ -22,7 +22,12 @@ class remote_server(ntpq_server):
         if not ntpq_output:
             ntpq_output = subprocess.check_output(['ntpq', '-pn', self.ip_address])  # Get remote ntpq output
         
-        # Populate the object with the info from the ntpq_output
-        ntpq_server.update(self, ntpq_output)
+        # Check ntpq_output if not valid
+        if ntpq_output == '':
+        	self.status = "Red"
+        	
+        else: # If valid, Populate the object with the info from the ntpq_output
+        	ntpq_server.update(self, ntpq_output)
+        	print ntpq_server.update(self, ntpq_output, '127.127.20.0', True)
         
         return         
