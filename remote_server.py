@@ -21,9 +21,12 @@ class remote_server(ntpq_server):
         # ntpq_output is found and stderr is piped
         ntpq_output = subprocess.check_output(['ntpq', '-pn', self.ip_address], stderr=subprocess.PIPE) 
         
-        # Check ntpq_output, if this is emtpy it means that no output was received from the 'ntpq -pn' query.
+        # Check ntpq_output, if this is emtpy it means that no output was received from the 'ntpq -pn' query.                 
         if ntpq_output == '':
-        	self.status = "Red"
+        	if subprocess.Popen(['ping', '-w','3', self.ip_address], stdout=subprocess.PIPE).wait() == 1:
+        		self.net_status = "Net fail"	# If pingtest fails, net_status will say "Net fail"
+        	else: 
+        		self.hipat_status = "HiPAT Fail" # If network is ok, and no ntpq_output is recieved, then HiPAT is down      	
         else: # If valid, Populate the object with the info from the ntpq_output
         	ntpq_server.update(self, ntpq_output)
         	# ntpq_server.update(self, ntpq_output, '127.127.20.0', True)
