@@ -19,11 +19,8 @@ class myThread(threading.Thread):
         self.server_object = server_object
         return
         
-    def run(self, timeout):
-        print "Running ntpq for {0}".format(self.server_object.name)
-        ntpq_output = subprocess.check_output(['ntpq', '-pn', self.server_object.ip_address])
-        time.sleep(3)
+    def run(self):
+        ntpq_output = subprocess.check_output(['ntpq', '-pn', self.server_object.ip_address], stderr=subprocess.PIPE)
         self.server_object.update(ntpq_output)
-        print "Done with {0}".format(self.server_object.name)
         return        
     

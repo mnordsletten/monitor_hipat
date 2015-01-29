@@ -19,7 +19,7 @@ class ntpq_server():
         self.offset = 0.0
         self.when = 0.0
         self.jitter = 0.0
-        self.status = 0
+        self.status = "Init"
         self.remote = True  # False if it is a local ntp measurement
         self.last_fail = datetime.datetime.min
         

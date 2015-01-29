@@ -6,6 +6,7 @@
 from local_server import local_server
 from remote_server import remote_server
 from config import config
+from update_remote import myThread
 import datetime
 import subprocess
 import re
@@ -78,7 +79,9 @@ def main():
     
     while(True):
         for server in server_list:
-            server.update()
+            thread_update = myThread(server)
+            thread_update.start()
+        time.sleep(1)
         os.system('cls' if os.name == 'nt' else 'clear')
         print_servers(server_list)
         time.sleep(20)
