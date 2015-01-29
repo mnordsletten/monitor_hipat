@@ -78,12 +78,13 @@ def main():
     server_list = find_servers()
     
     while(True):
+        # Create threads for every server so that the updates happen at the same time
         for server in server_list:
-            thread_update = myThread(server)
-            thread_update.start()
-        time.sleep(1)
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print_servers(server_list)
+            thread_update = myThread(server)    
+            thread_update.start()   
+        time.sleep(2)                                       # Wait 2 seconds for the update to finish
+        os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
+        print_servers(server_list)                          # Print all the servers
         time.sleep(20)
         
 if __name__ == '__main__':
