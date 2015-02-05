@@ -22,7 +22,27 @@ class remote_server(ntpq_server):
                                                 self.hipat_status,
                                                 self.net_status,
                                                 self.cesium_status)
-    	
+                                                
+    def find_status(self):
+        """Will process that status using the extra information available in remote_server. hipat_status, net_status and
+        cesium_status will all be used.
+        
+        returns: None
+        """
+        if not net_status:
+            self.status = "Red"
+            self.comment = "Net fail"
+        elif not hipat_status:
+            self.status = "Red"
+            self.comment = "Hipat fail"
+        elif #offset within boundaries. MÅ FIKSE
+            self.status = "Green"
+            self.comment = "OK"
+        elif self.cesium_status:
+            self.status = "Yellow"
+            self.comment = "NOE VELDIG BRA ER PA VEI"   # FIND SOMETHING POSITIVE
+        else:
+            pass # MÅ VI HA NOE HER?
     	 
     def update(self):
         """ update() will extract the important information (offset, when and jitter) from the ntpq_output. 
