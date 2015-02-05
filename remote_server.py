@@ -22,17 +22,17 @@ class remote_server(ntpq_server):
         
         # Check ntpq_output, if this is emtpy it means that no output was received from the 'ntpq -pn' query.                 
         if ntpq_output == '':
-        	if subprocess.Popen(['ping', '-t','3', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait() == 1:
+        	if subprocess.Popen(['ping', '-t','2', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait() == 1:
         		self.net_status = False	# If pingtest fails, net_status will be False
         	else: 
         		self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down      	
         else: # If valid, Populate the object with the info from the ntpq_output
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True
-        	ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
-        	if ntpq_server.status == "Red":
-                reach = ntpq_server.update(self, ntpq_output, '127.127.20.0', True) # Will get back the reach to the cesium
+            
+            ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
+            if self.status == "Red":
+                reach = ntpq_server.update(self, ntpq_output, '158.112.116.2', True) # Will get back the reach to the cesium
                 if reach > 0:
                     self.status = "Yellow"  # The HiPAT server has valid data from the Cesium oscillator
-        
         return         
