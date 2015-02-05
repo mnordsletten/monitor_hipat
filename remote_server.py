@@ -10,6 +10,18 @@ class remote_server(ntpq_server):
       	
     	ntpq_server.__init__(self, ip_address)  # Call parents init server to populate all fields
     	self.name = name # Set name
+        self.hipat_status = False
+        self.net_status = False
+        self.cesium_status = False
+    
+    def __str__(self):
+        return ("{0}"
+                "Hipat_status: {1} \n"
+                "Net_status: {2} \n"
+                "Cesium_status: {3}").format(ntpq_server.__str__(self),
+                                                self.hipat_status,
+                                                self.net_status,
+                                                self.cesium_status)
     	
     	 
     def update(self):
@@ -31,8 +43,6 @@ class remote_server(ntpq_server):
             self.hipat_status = True    # All is ok, set to True
             
             ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
-            if self.status == "Red":
-                reach = ntpq_server.update(self, ntpq_output, '158.112.116.2', True) # Will get back the reach to the cesium
-                if reach > 0:
-                    self.status = "Yellow"  # The HiPAT server has valid data from the Cesium oscillator
+            if ntpq_server.update(self, ntpq_output, '158.112.116.2', True) > 0:    # If Cesium can be reached it returns > 0
+                self.cesium_status = True   # The HiPAT server has valid data from the Cesium oscillator
         return         

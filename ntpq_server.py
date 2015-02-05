@@ -2,7 +2,7 @@ import datetime
 import re
 from config import config
 
-class ntpq_server():
+class ntpq_server(object):
     """This file contains the class ntpq_server. This is a class that contains information about the remote site. 
     The ntpq servers can be found and populated in one of two ways:
     1. Local population: The local "ntpq -p" output is read, offset info is gathered from this output.
@@ -20,8 +20,6 @@ class ntpq_server():
         self.when = 0.0
         self.jitter = 0.0
         self.status = "Init"
-        self.hipat_status = 0
-        self.net_status = 0
         self.remote = True  # False if it is a local ntp measurement
         self.last_fail = datetime.datetime.min
         
@@ -33,7 +31,7 @@ class ntpq_server():
                 "Jitter: {4} \n"
                 "Status: {5} \n"
                 "Remote: {6} \n"
-                "Last Fail: {7}").format(self.name, 
+                "Last Fail: {7} \n").format(self.name, 
                                          self.ip_address,
                                          self.offset,
                                          self.when,
