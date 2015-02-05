@@ -42,16 +42,14 @@ class ntpq_server(object):
                                          
     def find_status(self):
         """Will process what the status of the ntpq_server is based on the available data.
+        Red status will be set if no updates are received in the last 2 minutes or the offset is larger than +- 5ms.
         """
         offset = abs(self.offset)   # Get positive value of offset
-        if (self.when < 120 and 10 < offset < 5):
-            self.status = "Yellow"
         elif (self.when > 120 or offset > 5):
             self.status = "Red"
             self.last_fail = datetime.datetime.now()
         else:
             self.status = "Green"
-            
         return
     
     def update(self, ntpq_output, ip_address = config["ref_ip_address"], cesium_reach = False):
