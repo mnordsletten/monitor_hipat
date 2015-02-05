@@ -13,8 +13,7 @@ class remote_server(ntpq_server):
     	
     	 
     def update(self):
-        """ update() will extract the important information (offset, when and jitter) from the ntpq_output.
-        A different source for the ntpq_output can be given, but the default way is to perform a 'ntpq -pn' check. 
+        """ update() will extract the important information (offset, when and jitter) from the ntpq_output. 
         From a remote server the ntpq output is gathered from a 'ntpq -pn <ip_address>' query. To insert the information in the object
         the parents update function is called. 
         """
@@ -24,11 +23,16 @@ class remote_server(ntpq_server):
         # Check ntpq_output, if this is emtpy it means that no output was received from the 'ntpq -pn' query.                 
         if ntpq_output == '':
         	if subprocess.Popen(['ping', '-t','3', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait() == 1:
-        		self.net_status = "Net fail"	# If pingtest fails, net_status will say "Net fail"
+        		self.net_status = False	# If pingtest fails, net_status will be False
         	else: 
-        		self.hipat_status = "HiPAT Fail" # If network is ok, and no ntpq_output is recieved, then HiPAT is down      	
+        		self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down      	
         else: # If valid, Populate the object with the info from the ntpq_output
-        	ntpq_server.update(self, ntpq_output)
-        	# ntpq_server.update(self, ntpq_output, '127.127.20.0', True)
+            self.net_status = True      # All is ok, set to True
+            self.hipat_status = True    # All is ok, set to True
+        	ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
+        	if ntpq_server.status == "Red":
+                reach = ntpq_server.update(self, ntpq_output, '127.127.20.0', True) # Will get back the reach to the cesium
+                if reach > 0:
+                    self.status = "Yellow"  # The HiPAT server has valid data from the Cesium oscillator
         
         return         
