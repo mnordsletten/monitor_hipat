@@ -1,5 +1,6 @@
 from ntpq_server import ntpq_server
 import subprocess
+import datetime
 
 class remote_server(ntpq_server):
     """ remote_server extends the base ntpq_server class with methods for updating a remote server. It contains methods for:
@@ -55,8 +56,10 @@ class remote_server(ntpq_server):
         if ntpq_output == '':
         	if subprocess.Popen(['ping', '-t','2', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait() == 1:
         		self.net_status = False	# If pingtest fails, net_status will be False
+        		self.find_status() 		# Update function wont be run, therefore find_status is called directly
         	else: 
-        		self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down      	
+        		self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down
+        		self.find_status()    	  # Update function wont be run, therefore find_status is called directly
         else: # If valid, Populate the object with the info from the ntpq_output
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True
