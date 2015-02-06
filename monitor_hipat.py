@@ -44,12 +44,14 @@ def print_servers(server_list):
     server_list: list containing the ntpq_server objects.
     """ 
     server_list.sort(key=lambda y: y.last_fail, reverse=True)
-    print "{0:<20}{1:<8}{2:<8}{3:<10}{4:<14}{5}".format("Name", "Status", "Offset", "When", "Last Failed", "Ip address")
+    print "{0:<20}{1:<20}{2:<8}{3:<10}{4:<14}{5}".format("Name", "Status", "Offset", "When", "Last Failed", "Ip address")
     for server in server_list:
         delta_last_fail = datetime.datetime.now() - server.last_fail    # Calculate timedelta to last fail
-        if server.last_fail == datetime.datetime.min:
+        if server.status == "Init":
+            last_fail_string = "Init"
+        elif server.last_fail == datetime.datetime.min:
             last_fail_string = "Never Failed"
-        elif delta_last_fail < datetime.timedelta(seconds=10):  # Delta is below 10 seconds
+        elif delta_last_fail < datetime.timedelta(seconds=10) or server.status == "Red":  # Delta is below 10 seconds
             last_fail_string = "Failing"
         elif delta_last_fail < datetime.timedelta(seconds=60):  # Delta is below 1 minute
             last_fail_string = str(delta_last_fail.seconds) + " Seconds"
@@ -71,7 +73,7 @@ def print_servers(server_list):
             background_colour = ""
         
         background_colour_end = "\033[0m"
-        print "{0.name:<20}{2}{0.status:<8}{3}{0.offset:<8}{0.when:<10}{1:<14}{0.ip_address}".format(server, last_fail_string, background_colour, background_colour_end)
+        print "{0.name:<20}{2}{0.comment:<20}{3}{0.offset:<8}{0.when:<10}{1:<14}{0.ip_address}".format(server, last_fail_string, background_colour, background_colour_end)
 
 def main():
     # Get a list of servers
