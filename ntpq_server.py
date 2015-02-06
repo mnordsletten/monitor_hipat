@@ -22,6 +22,7 @@ class ntpq_server(object):
         self.status = "Init"
         self.remote = True  # False if it is a local ntp measurement
         self.last_fail = datetime.datetime.min
+        self.comment = ""
         
     def __str__(self):
         return ("Name: {0} \n"
@@ -31,26 +32,30 @@ class ntpq_server(object):
                 "Jitter: {4} \n"
                 "Status: {5} \n"
                 "Remote: {6} \n"
-                "Last Fail: {7} \n").format(self.name, 
+                "Last Fail: {7} \n"
+                "Comment: {8} \n").format(self.name, 
                                          self.ip_address,
                                          self.offset,
                                          self.when,
                                          self.jitter,
                                          self.status,
                                          self.remote,
-                                         self.last_fail)
+                                         self.last_fail,
+                                         self.comment)
                                          
     def find_status(self):
         """Will process what the status of the ntpq_server is based on the available data.
         Red status will be set if no updates are received in the last 2 minutes or the offset is larger than +- 5ms.
         """
         offset = abs(self.offset)   # Get positive value of offset
-        elif (self.when > 120 or offset > 5):
+        if (self.when > 120 or offset > 5):
             self.status = "Red"
+            self.comment = "Not Synchronized"
             self.last_fail = datetime.datetime.now()
         else:
             self.status = "Green"
-        return
+            self.comment = "OK"
+        return 
     
     def update(self, ntpq_output, ip_address = config["ref_ip_address"], cesium_reach = False):
         """update() will extract the important information (offset, when and jitter) from the ntpq_output.

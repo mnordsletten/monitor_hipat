@@ -29,20 +29,19 @@ class remote_server(ntpq_server):
         
         returns: None
         """
-        if not net_status:
+        ntpq_server.find_status(self)
+        if not self.net_status:                             # If the server is not reachable
             self.status = "Red"
             self.comment = "Net fail"
-        elif not hipat_status:
+            self.last_fail = datetime.datetime.now()
+        elif not self.hipat_status:                         # If the server is reachable, but no ntpq output is available
             self.status = "Red"
             self.comment = "Hipat fail"
-        elif #offset within boundaries. MÅ FIKSE
-            self.status = "Green"
-            self.comment = "OK"
-        elif self.cesium_status:
+            self.last_fail = datetime.datetime.now()
+        elif self.status == "Red" and self.cesium_status:   # If all is ok, the server is not synchronized, but the cesium is online
             self.status = "Yellow"
-            self.comment = "NOE VELDIG BRA ER PA VEI"   # FIND SOMETHING POSITIVE
-        else:
-            pass # MÅ VI HA NOE HER?
+            self.comment = "HiPAT synchronizing"   
+        return  
     	 
     def update(self):
         """ update() will extract the important information (offset, when and jitter) from the ntpq_output. 
@@ -62,7 +61,11 @@ class remote_server(ntpq_server):
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True
             
-            ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
             if ntpq_server.update(self, ntpq_output, '158.112.116.2', True) > 0:    # If Cesium can be reached it returns > 0
                 self.cesium_status = True   # The HiPAT server has valid data from the Cesium oscillator
+            else:
+                self.cesium_status = False  # Will be set to False if it is not reached
+            
+            ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
+            
         return         
