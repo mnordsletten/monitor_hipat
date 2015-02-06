@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# VERSION 2.0
-# TO DO
-# ping test to remote sites to check complete status if they don't respond to ntpq -p
+# Version 2.1
+# To Do
+# - Look at sorting of prints, so that they don't change order when multiple are failing at the same time.
+# - Can we include when it actually failed, instead of just failing?
+# - Variable length to the comment/status field?
 
 from local_server import local_server
 from remote_server import remote_server
