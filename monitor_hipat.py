@@ -46,12 +46,29 @@ def print_servers(server_list):
     server_list: list containing the ntpq_server objects.
     """ 
     server_list.sort(key=lambda y: y.last_fail, reverse=True)
-    longest_status_message = 0
-    for server in server_list:
-        if (len(server.comment) > longest_status_message):
-            longest_status_message = len(server.comment)
     
-    print "{0:<20}{1:<{6}}{2:<8}{3:<10}{4:<14}{5}".format("Name", "Status", "Offset", "When", "Last Failed", "Ip address", longest_status_message)
+    string_lengths = {"name":5, "comment":7, "offset":7, "when":5, "last_fail":12, "ip_address":11}
+    
+    for variable, length in string_lengths.items():
+    	for server in server_list:
+    		# print "Variable:{0} Length:{1} Server:{2}".format(variable, length, vars(server)[variable])
+    		if (len(str(vars(server)[variable]))) > length:
+    			string_lengths[variable] = len(str(vars(server)[variable])) + 1    
+    
+
+    
+    print ("{0:<{6[name]}}"
+    	   "{1:<{6[comment]}}"
+    	   "{2:<{6[offset]}}"
+    	   "{3:<{6[when]}}"
+    	   "{4:<{6[last_fail]}}"
+    	   "{5:<{6[ip_address]}}").format("Name",
+    	   									"Status",
+    	   									"Offset",
+    	   									"When",
+    	   									"Last Failed",
+    	   									"Ip address",
+    	   									string_lengths)
     for server in server_list:
         delta_last_fail = datetime.datetime.now() - server.last_fail    # Calculate timedelta to last fail
         if server.status == "Init":
@@ -80,7 +97,16 @@ def print_servers(server_list):
             background_colour = ""
         
         background_colour_end = "\033[0m"
-        print "{0.name:<20}{2}{0.comment:<{4}}{3}{0.offset:<8}{0.when:<10}{1:<14}{0.ip_address}".format(server, last_fail_string, background_colour, background_colour_end, longest_status_message)
+        print ("{0.name:<{4[name]}}"
+        	   "{2}{0.comment:<{4[comment]}}{3}"
+        	   "{0.offset:<{4[offset]}}"
+        	   "{0.when:<{4[when]}}"
+        	   "{1:<{4[last_fail]}}"
+        	   "{0.ip_address:<{4[ip_address]}}").format(server, 
+        	   								   		last_fail_string, 
+        	   								   		background_colour, 
+        	   								   		background_colour_end, 
+        	   								   		string_lengths)
 
 def main():
     # Get a list of servers
