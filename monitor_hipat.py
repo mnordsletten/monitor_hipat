@@ -3,7 +3,6 @@
 # To Do
 # - Look at sorting of prints, so that they don't change order when multiple are failing at the same time.
 # - Can we include when it actually failed, instead of just failing?
-# - Variable length to the comment/status field?
 
 from local_server import local_server
 from remote_server import remote_server
@@ -45,23 +44,26 @@ def print_servers(server_list):
     """Will print the server objects represented in the server_list.
     server_list: list containing the ntpq_server objects.
     """ 
-    server_list.sort(key=lambda y: y.last_fail, reverse=True)
+    server_list.sort(key=lambda y: y.last_fail, reverse=True)   # Sorting list with last_fail first
     
-    string_lengths = {"name":5, "comment":7, "offset":7, "when":5, "last_fail":12, "ip_address":11}
+    # To ensure the print output is formatted correctly a few operations are performed:
+    # 1. Minimum string lengths are saved in string_lengths, this is the length of the headers
+    # 2. All the fields in the server objects are scanned and the length of the longest entry is saved in string_lengths
+    # 3. The lengths taken from string_lengths are used in the two print statements
+    string_lengths = {"name":5, "comment":7, "offset":7, "when":5, "last_fail":12, "ip_address":11} # Saves minimum length of strings
     
-    for variable, length in string_lengths.items():
-    	for server in server_list:
-    		# print "Variable:{0} Length:{1} Server:{2}".format(variable, length, vars(server)[variable])
-    		if (len(str(vars(server)[variable]))) > length:
-    			string_lengths[variable] = len(str(vars(server)[variable])) + 1    
-    
+    # Extracts the maximum length of the various fields printed
+    for variable, length in string_lengths.items(): # Loop through the different items
+    	for server in server_list:                  # Loop through the different servers
+    		if (len(str(vars(server)[variable]))) >= string_lengths[variable]:  # If the length of the string exceeds the saved string_length
+    			string_lengths[variable] = len(str(vars(server)[variable])) + 1 # Always save the maximum string length
 
-    
+    # Print the header fields
     print ("{0:<{6[name]}}"
     	   "{1:<{6[comment]}}"
     	   "{2:<{6[offset]}}"
     	   "{3:<{6[when]}}"
-    	   "{4:<{6[last_fail]}}"
+    	   "{4:<12}"
     	   "{5:<{6[ip_address]}}").format("Name",
     	   									"Status",
     	   									"Offset",
@@ -69,6 +71,7 @@ def print_servers(server_list):
     	   									"Last Failed",
     	   									"Ip address",
     	   									string_lengths)
+    # Loop through the servers and print the various fields
     for server in server_list:
         delta_last_fail = datetime.datetime.now() - server.last_fail    # Calculate timedelta to last fail
         if server.status == "Init":
@@ -80,17 +83,17 @@ def print_servers(server_list):
         elif delta_last_fail < datetime.timedelta(seconds=60):  # Delta is below 1 minute
             last_fail_string = str(delta_last_fail.seconds) + " Seconds"
         elif delta_last_fail < datetime.timedelta(seconds=3600): # Delta is below 1 hour
-            last_fail_string = str(delta_last_fail.seconds/60) + " Minutes"
+            last_fail_string = str(delta_last_fail.seconds/60) + " Minute(s)"
         elif delta_last_fail < datetime.timedelta(days=1):      # Delta is below 1 day
             last_fail_string = str(delta_last_fail.seconds/3600) + " Hours"
         else:
             last_fail_string = str(delta_last_fail.days) + " Days"
         
-        # Will modify the background colour of the text based on the status used. Confirmed to work on a Mac
+        # Will modify the background colour of the text based on the status used. 
         if server.status == "Green":
             background_colour = "\033[30;42m"   # Black text (30) on Green background (42)
         elif server.status == "Red":
-            background_colour = "\033[41m"      # Red background (41)
+            background_colour = "\033[37;41m"   # White text (37) on Red background (41)
         elif server.status == "Yellow":
             background_colour = "\033[30;43m"   # Black text (30) on Yellow Background (43)
         else:
@@ -101,7 +104,7 @@ def print_servers(server_list):
         	   "{2}{0.comment:<{4[comment]}}{3}"
         	   "{0.offset:<{4[offset]}}"
         	   "{0.when:<{4[when]}}"
-        	   "{1:<{4[last_fail]}}"
+        	   "{1:<12}"
         	   "{0.ip_address:<{4[ip_address]}}").format(server, 
         	   								   		last_fail_string, 
         	   								   		background_colour, 
