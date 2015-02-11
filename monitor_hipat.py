@@ -77,7 +77,7 @@ def print_servers(server_list):
         if server.status == "Init":
             last_fail_string = "Init"
         elif server.last_fail == datetime.datetime.min:
-            last_fail_string = "Never Failed"
+            last_fail_string = "Never"
         elif delta_last_fail < datetime.timedelta(seconds=10) or server.status == "Red":  # Delta is below 10 seconds
             last_fail_string = "Failing"
         elif delta_last_fail < datetime.timedelta(seconds=60):  # Delta is below 1 minute
@@ -120,7 +120,7 @@ def main():
         for server in server_list:
             thread_update = myThread(server)    
             thread_update.start()   
-        time.sleep(2)                                       # Wait 2 seconds for the update to finish
+        time.sleep(4)                                       # Wait 4 seconds for the update to finish
         os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
         print_servers(server_list)                          # Print all the servers
         time.sleep(20)
