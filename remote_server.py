@@ -64,7 +64,7 @@ class remote_server(ntpq_server):
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True
             
-            if ntpq_server.update(self, ntpq_output, '158.112.116.2', True) > 0:    # If Cesium can be reached it returns > 0
+            if ntpq_server.update(self, ntpq_output, '127.127.20.0', True) > 0:    # If Cesium can be reached it returns > 0
                 self.cesium_status = True   # The HiPAT server has valid data from the Cesium oscillator
             else:
                 self.cesium_status = False  # Will be set to False if it is not reached

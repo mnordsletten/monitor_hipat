@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Version 2.1
 # To Do
 # - Look at sorting of prints, so that they don't change order when multiple are failing at the same time.
 # - Can we include when it actually failed, instead of just failing?
@@ -60,7 +59,7 @@ def print_servers(server_list):
 
     # Print the header fields
     print ("{0:<{6[name]}}"
-    	   "{1:<{6[comment]}}"
+    	   "{1:<{7}} "
     	   "{2:<{6[offset]}}"
     	   "{3:<{6[when]}}"
     	   "{4:<12}"
@@ -70,7 +69,8 @@ def print_servers(server_list):
     	   									"When",
     	   									"Last Failed",
     	   									"Ip address",
-    	   									string_lengths)
+    	   									string_lengths,
+                                            (string_lengths['comment']-1))
     # Loop through the servers and print the various fields
     for server in server_list:
         delta_last_fail = datetime.datetime.now() - server.last_fail    # Calculate timedelta to last fail
@@ -101,7 +101,7 @@ def print_servers(server_list):
         
         background_colour_end = "\033[0m"
         print ("{0.name:<{4[name]}}"
-        	   "{2}{0.comment:<{4[comment]}}{3}"
+        	   "{2}{0.comment:<{5}}{3} "
         	   "{0.offset:<{4[offset]}}"
         	   "{0.when:<{4[when]}}"
         	   "{1:<12}"
@@ -109,7 +109,8 @@ def print_servers(server_list):
         	   								   		last_fail_string, 
         	   								   		background_colour, 
         	   								   		background_colour_end, 
-        	   								   		string_lengths)
+        	   								   		string_lengths,
+                                                    (string_lengths['comment'] -1))
 
 def main():
     # Get a list of servers
