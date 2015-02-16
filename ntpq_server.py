@@ -67,6 +67,9 @@ class ntpq_server(object):
         
         Update places the result in the objects fields.
         """
+        if self.remote_ip: #If there is a remote ip address, ip_address will be the remote IP address.
+            ip_address = self.remote_ip
+
         regex = (   '(?P<ip_address>{0})\s+'# ip_address to get info from
                     '(?P<refid>\S+)\s+'     # refid 
                     '(?P<st>\S+)\s+'        # stratum

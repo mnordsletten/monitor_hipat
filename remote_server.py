@@ -7,22 +7,25 @@ class remote_server(ntpq_server):
     1. Call the parents init method and set the name of the server.
     2. Updating the status (offset, when, jitter) of the individual server while performing a remote NTPQ-query.   
     """
-    def __init__(self, ip_address="0.0.0.0", name="init"):
+    def __init__(self, ip_address="0.0.0.0", name="init", remote_ip = False):
       	
     	ntpq_server.__init__(self, ip_address)  # Call parents init server to populate all fields
     	self.name = name # Set name
         self.hipat_status = False
         self.net_status = False
         self.cesium_status = False
+        self.remote_ip = remote_ip 
     
     def __str__(self):
         return ("{0}"
                 "Hipat_status: {1} \n"
                 "Net_status: {2} \n"
-                "Cesium_status: {3}").format(ntpq_server.__str__(self),
+                "Cesium_status: {3}\n"
+                "Remote_ip: {4}").format(ntpq_server.__str__(self),
                                                 self.hipat_status,
                                                 self.net_status,
-                                                self.cesium_status)
+                                                self.cesium_status,
+                                                self.remote_ip)
                                                 
     def find_status(self):
         """Will process that status using the extra information available in remote_server. hipat_status, net_status and

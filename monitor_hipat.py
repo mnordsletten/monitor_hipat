@@ -32,7 +32,7 @@ def find_servers():
     server_objects = []
     for server in server_ips:
         if config["remote_status"] == "remote":
-            server_instance = remote_server(ip_address = server[0], name = server[1])
+            server_instance = remote_server(ip_address = server[0], name = server[1], remote_ip = server[2])
         elif config["remote_status"] == "local":
             server_instance = local_server(ip_address = server)
         server_objects.append(server_instance)

@@ -23,8 +23,14 @@ def scan_config():
             config_value = match.group(2)       # Extract the config value
             
             if config_item == "ip_address":     # If we are dealing with an ip address both the name and ip must be saved
-                ip_match = re.search("(\S+):(\S+)", config_value)   # One group for ip and one for name
-                config["ip_address"].append([ip_match.group(1), ip_match.group(2)]) # Append ip and name as a list to the ip_address list in the config dict
+                try: #checks if there is a third group
+                    ip_match = re.search("(\S+):(\S+):(\S+)", config_value)   # One group for ip and one for name and one group for remote ip
+                    config["ip_address"].append([ip_match.group(1), ip_match.group(2), ip_match.group(3)]) # Append ip, name and remote ip as a list to the ip_address list in the config dict
+                except AttributeError: #if not, it will continue as it has two groups
+                    ip_match = re.search("(\S+):(\S+)", config_value)   # One group for ip, one for name and one for remote ip
+                    config["ip_address"].append([ip_match.group(1), ip_match.group(2), False]) # Append ip and name as a list to the ip_address list in the config dict
+
+                
                 continue                        # Ip address has already been saved so we continue the loop
                 
             config[config_item] = config_value  # All normal items are saved here
@@ -33,3 +39,4 @@ def scan_config():
     return config
     
 config = scan_config()
+
