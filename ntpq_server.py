@@ -23,6 +23,7 @@ class ntpq_server(object):
         self.remote = True  # False if it is a local ntp measurement
         self.last_fail = datetime.datetime.min
         self.comment = ""
+        self.remote_ip = False
         
     def __str__(self):
         return ("Name: {0} \n"
