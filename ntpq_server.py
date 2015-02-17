@@ -91,8 +91,10 @@ class ntpq_server(object):
             when_output = regex_results.group('when')           # when_output is easier to work with
             if cesium_reach:
             	return int(regex_results.group('reach')) 		# Special occurance where reach is needed
-        except IndexError:                                      # If an argument is not found in the regex results.
-            print "Offset not found in ntpq_output"
+        except AttributeError:                                  # If an argument is not found in the regex results.
+            self.status = "Red"                                 # Will show up as red status
+            self.comment = "Check ip's in config.txt"           # Will print this error message
+            return
         
         # When is processed, the answer is converted to seconds.
         if when_output == '-':                          # If no updates received a '-' is displayed
