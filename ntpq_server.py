@@ -24,6 +24,7 @@ class ntpq_server(object):
         self.last_fail = datetime.datetime.min
         self.comment = ""
         self.remote_ip = False
+        self.last_active = 0
         
     def __str__(self):
         return ("Name: {0} \n"
@@ -34,7 +35,8 @@ class ntpq_server(object):
                 "Status: {5} \n"
                 "Remote: {6} \n"
                 "Last Fail: {7} \n"
-                "Comment: {8} \n").format(self.name, 
+                "Comment: {8} \n"
+                "Last Active: {9} \n").format(self.name, 
                                          self.ip_address,
                                          self.offset,
                                          self.when,
@@ -42,7 +44,8 @@ class ntpq_server(object):
                                          self.status,
                                          self.remote,
                                          self.last_fail,
-                                         self.comment)
+                                         self.comment,
+                                         self.last_active)
                                          
     def find_status(self):
         """Will process what the status of the ntpq_server is based on the available data.
@@ -56,6 +59,7 @@ class ntpq_server(object):
         else:
             self.status = "Green"
             self.comment = "OK"
+            self.last_active = datetime.datetime.now()   
         return 
     
     def update(self, ntpq_output, ip_address = config["ref_ip_address"], cesium_reach = False):

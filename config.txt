@@ -26,8 +26,9 @@
 # ip_address: 11.22.33.44:name
 # ip_address: 11.22.33.44:name:55.66.77.88         # Where 11.22.33.44 is the server to get <ntpq -pn> info from and 55.66.77.88 is the remote_ip.
 
-remote_status: local
-ref_ip_address: 158.112.116.10
-ip_address: 158.112.116.41:test:158.112.116.2
-ip_address: 158.112.116.41:test2
+remote_status: remote
+ref_ip_address: 158.112.116.41
+#ip_address: 158.112.116.41:test:158.112.116.2
+#ip_address: 158.112.116.41:test2
+ip_address: 158.112.116.44:EnFrekkTest
 

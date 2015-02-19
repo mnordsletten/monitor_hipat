@@ -67,28 +67,35 @@ def print_servers(server_list):
     	   									"Status",
     	   									"Offset",
     	   									"When",
-    	   									"Last Failed",
+    	   									"Last Update" ,
     	   									"Ip address",
     	   									string_lengths,
                                             (string_lengths['comment']-1))
     # Loop through the servers and print the various fields
     for server in server_list:
-        delta_last_fail = datetime.datetime.now() - server.last_fail    # Calculate timedelta to last fail
-        if server.status == "Init":
-            last_fail_string = "Init"
-        elif server.last_fail == datetime.datetime.min:
-            last_fail_string = "Never"
-        elif delta_last_fail < datetime.timedelta(seconds=10) or server.status == "Red":  # Delta is below 10 seconds
-            last_fail_string = "Failing"
-        elif delta_last_fail < datetime.timedelta(seconds=60):  # Delta is below 1 minute
-            last_fail_string = str(delta_last_fail.seconds) + " Seconds"
-        elif delta_last_fail < datetime.timedelta(seconds=3600): # Delta is below 1 hour
-            last_fail_string = str(delta_last_fail.seconds/60) + " Minute(s)"
-        elif delta_last_fail < datetime.timedelta(days=1):      # Delta is below 1 day
-            last_fail_string = str(delta_last_fail.seconds/3600) + " Hours"
-        else:
-            last_fail_string = str(delta_last_fail.days) + " Days"
+        delta = datetime.timedelta(seconds = 0)
         
+        if server.status == "Init":
+            last_update_string = "Init"
+        elif server.last_fail == datetime.datetime.min:
+            last_update_string = "Never"
+        elif server.status == "Green":
+            delta = datetime.datetime.now() - server.last_fail # Calculate timedelta to last fail
+            last_update_string = "Last Failed: "
+        elif server.status == "Red":
+            delta = datetime.datetime.now() - server.last_active # Calculate timedelta to last active
+            last_update_string = "Last Active: "
+
+        if last_update_string != "Init" and last_update_string != "Never":
+            if delta < datetime.timedelta(seconds=60):  # Delta is below 1 minute
+                last_update_string += str(delta.seconds) + " Seconds"
+            elif delta < datetime.timedelta(seconds=3600): # Delta is below 1 hour
+                last_update_string += str(delta.seconds/60) + " Minute(s)"
+            elif delta < datetime.timedelta(days=1):      # Delta is below 1 day
+                last_update_string += str(delta.seconds/3600) + " Hours"
+            else:
+                last_update_string += str(delta.days) + " Days"
+             
         # Will modify the background colour of the text based on the status used. 
         if server.status == "Green":
             background_colour = "\033[30;42m"   # Black text (30) on Green background (42)
@@ -106,7 +113,7 @@ def print_servers(server_list):
         	   "{0.when:<{4[when]}}"
         	   "{1:<12}"
         	   "{0.ip_address:<{4[ip_address]}}").format(server, 
-        	   								   		last_fail_string, 
+        	   								   		last_update_string, 
         	   								   		background_colour, 
         	   								   		background_colour_end, 
         	   								   		string_lengths,
