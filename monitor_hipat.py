@@ -120,7 +120,7 @@ def print_servers(server_list):
         	   								   		background_colour_end, 
         	   								   		string_lengths,
                                                     (string_lengths['comment'] -1))
-        print "If status = Green => Last Update = Last Failed \n If status = Red => Last Update = Last Failed" #Instead of printing Last Failed and Last Update in the program, this will come as a comment below
+        print "If status = Green => Last Update = Last Failed \nIf status = Red   => Last Update = Last Active" #Instead of printing Last Failed and Last Update in the program, this will come as a comment below
 
 def main():
     # Get a list of servers
