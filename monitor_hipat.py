@@ -83,10 +83,10 @@ def print_servers(server_list):
             last_update_string = "Never"
         elif server.status == "Green":
             delta = datetime.datetime.now() - server.last_fail # Calculate timedelta to last fail
-            last_update_string = "Last Failed: "
+            last_update_string = ""
         elif server.status == "Red":
             delta = datetime.datetime.now() - server.last_active # Calculate timedelta to last active
-            last_update_string = "Last Active: "
+            last_update_string = ""
 
         if last_update_string != "Init" and last_update_string != "Never":
             if delta < datetime.timedelta(seconds=60):  # Delta is below 1 minute
@@ -120,6 +120,7 @@ def print_servers(server_list):
         	   								   		background_colour_end, 
         	   								   		string_lengths,
                                                     (string_lengths['comment'] -1))
+        print "If status = Green => Last Update = Last Failed \n If status = Red => Last Update = Last Failed" #Instead of printing Last Failed and Last Update in the program, this will come as a comment below
 
 def main():
     # Get a list of servers
