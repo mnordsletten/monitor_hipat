@@ -57,12 +57,15 @@ class remote_server(ntpq_server):
         
         # Check ntpq_output, if this is emtpy it means that no output was received from the 'ntpq -pn' query.                 
         if ntpq_output == '':
-        	if subprocess.Popen(['ping', '-t','2', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait() == 1:
+        	
+            ping_result = subprocess.Popen(['ping', '-t','2', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
+            if ping_result == 2:    # 2 means no response received
         		self.net_status = False	# If pingtest fails, net_status will be False
         		self.find_status() 		# Update function wont be run, therefore find_status is called directly
-        	else: 
-        		self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down
-        		self.find_status()    	  # Update function wont be run, therefore find_status is called directly
+            else:  # if ping_result is 0 it means pingtest was successfull
+                self.net_status = True  # Pingtest is good, net_status is now True
+                self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down
+                self.find_status()    	  # Update function wont be run, therefore find_status is called directly
         else: # If valid, Populate the object with the info from the ntpq_output
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True

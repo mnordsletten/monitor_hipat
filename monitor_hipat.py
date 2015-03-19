@@ -75,7 +75,7 @@ def print_servers(server_list):
     # Loop through the servers and print the various fields
     for server in server_list:
         delta = datetime.timedelta(seconds = 0)
-        last_update_string = ""
+        last_update_string = "" 
         
         if server.status == "Init":
             last_update_string = "Init"
