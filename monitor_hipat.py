@@ -75,8 +75,9 @@ def print_servers(server_list):
     # Loop through the servers and print the various fields
     for server in server_list:
         delta = datetime.timedelta(seconds = 0)
-        last_update_string = "" 
+        last_update_string = ""
         
+        # Decide what the last_update_string variable will say based on the server status
         if server.status == "Init":
             last_update_string = "Init"
         elif server.last_fail == datetime.datetime.min:
@@ -85,10 +86,14 @@ def print_servers(server_list):
             delta = datetime.datetime.now() - server.last_fail # Calculate timedelta to last fail
             last_update_string = ""
         elif server.status == "Red":
-            delta = datetime.datetime.now() - server.last_active # Calculate timedelta to last active
-            last_update_string = ""
-
-        if last_update_string != "Init" and last_update_string != "Never":
+            if server.last_active != 0: # If server has never been active last_active is set to 0
+                delta = datetime.datetime.now() - server.last_active # Calculate timedelta to last active
+                last_update_string = ""
+            else:
+                last_update_string = "Never active "    # 
+        
+        # If the server has been active or failed the time diff is calculated
+        if last_update_string != "Init" and last_update_string[:5] != "Never":
             if delta < datetime.timedelta(seconds=60):  # Delta is below 1 minute
                 last_update_string += str(delta.seconds) + " Seconds"
             elif delta < datetime.timedelta(seconds=3600): # Delta is below 1 hour
@@ -120,7 +125,7 @@ def print_servers(server_list):
         	   								   		background_colour_end, 
         	   								   		string_lengths,
                                                     (string_lengths['comment'] -1))
-        print "If status = Green => Last Update = Last Failed \nIf status = Red   => Last Update = Last Active" #Instead of printing Last Failed and Last Update in the program, this will come as a comment below
+    print "\nIf status = Green => Last Update = Last Failed \nIf status = Red   => Last Update = Last Active" #Instead of printing Last Failed and Last Update in the program, this will come as a comment below
 
 def main():
     # Get a list of servers

@@ -33,7 +33,6 @@ class remote_server(ntpq_server):
         
         returns: None
         """
-        ntpq_server.find_status(self)
         if not self.net_status:                             # If the server is not reachable
             self.status = "Red"
             self.comment = "Net fail"
@@ -45,6 +44,8 @@ class remote_server(ntpq_server):
         elif self.status == "Red" and self.cesium_status:   # If all is ok, the server is not synchronized, but the cesium is online
             self.status = "Yellow"
             self.comment = "HiPAT synchronizing"   
+        else:
+            ntpq_server.find_status(self)                   # There is no red or yellow status, the normal find_status is called.
         return  
     	 
     def update(self):
