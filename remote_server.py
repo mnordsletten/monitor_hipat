@@ -39,13 +39,11 @@ class remote_server(ntpq_server):
             self.last_fail = datetime.datetime.now()
         elif not self.hipat_status:                         # If the server is reachable, but no ntpq output is available
             self.status = "Red"
-            self.comment = "Hipat fail"
+            self.comment = "HiPAT fail"
             self.last_fail = datetime.datetime.now()
-        elif self.status == "Red" and self.cesium_status:   # If all is ok, the server is not synchronized, but the cesium is online
-            self.status = "Yellow"
-            self.comment = "HiPAT synchronizing"   
-        else:
-            ntpq_server.find_status(self)                   # There is no red or yellow status, the normal find_status is called.
+        elif not self.cesium_status:                        # If all is ok, the server is not synchronized, but the cesium is online
+            self.status = "Red"
+            self.comment = "No response from remote Cesium"   
         return  
     	 
     def update(self):
@@ -62,11 +60,9 @@ class remote_server(ntpq_server):
             ping_result = subprocess.Popen(['ping', '-t','2', self.ip_address], stdout=subprocess.PIPE, stderr=subprocess.PIPE).wait()
             if ping_result == 2:    # 2 means no response received
         		self.net_status = False	# If pingtest fails, net_status will be False
-        		self.find_status() 		# Update function wont be run, therefore find_status is called directly
             else:  # if ping_result is 0 it means pingtest was successfull
                 self.net_status = True  # Pingtest is good, net_status is now True
                 self.hipat_status = False # If network is ok, and no ntpq_output is recieved, then HiPAT is down
-                self.find_status()    	  # Update function wont be run, therefore find_status is called directly
         else: # If valid, Populate the object with the info from the ntpq_output
             self.net_status = True      # All is ok, set to True
             self.hipat_status = True    # All is ok, set to True
@@ -77,5 +73,6 @@ class remote_server(ntpq_server):
                 self.cesium_status = False  # Will be set to False if it is not reached
             
             ntpq_server.update(self, ntpq_output)   # The object is updated with info from ref_server
-            
+        
+        self.find_status()    
         return         

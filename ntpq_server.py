@@ -53,8 +53,8 @@ class ntpq_server(object):
         """
         offset = abs(self.offset)   # Get positive value of offset
         if (self.when > 120 or offset > 5):
-            self.status = "Red"
-            self.comment = "Not Synchronized"
+            self.status = "Yellow"
+            self.comment = "HiPAT Synchronizing"
             self.last_fail = datetime.datetime.now()
         else:
             self.status = "Green"
@@ -114,6 +114,6 @@ class ntpq_server(object):
         	self.when = float(when_output) 				# already in seconds
         
         # Lastly we set the status of the object
-        self.find_status()
+        ntpq_server.find_status(self)
         return
 
