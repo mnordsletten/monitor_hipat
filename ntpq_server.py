@@ -59,7 +59,7 @@ class ntpq_server(object):
         else:
             self.status = "Green"
             self.comment = "OK"
-            self.last_active = datetime.datetime.now()   
+            #self.last_active = datetime.datetime.now()   
         return 
     
     def update(self, ntpq_output, ip_address = config["ref_ip_address"], cesium_reach = False):

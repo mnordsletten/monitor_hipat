@@ -41,9 +41,12 @@ class remote_server(ntpq_server):
             self.status = "Red"
             self.comment = "HiPAT fail"
             self.last_fail = datetime.datetime.now()
-        elif not self.cesium_status:                        # If all is ok, the server is not synchronized, but the cesium is online
+        elif not self.cesium_status:                        # If the server is reachable, but the cesium is not performing as expected
             self.status = "Red"
             self.comment = "No response from remote Cesium"   
+            self.last_fail = datetime.datetime.now()
+        elif self.status == "Green":                        # If the status has been marked green and not failed any other test last_active is updated
+            self.last_active = datetime.datetime.now()     
         return  
     	 
     def update(self):
