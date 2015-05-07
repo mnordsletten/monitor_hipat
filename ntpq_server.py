@@ -55,7 +55,6 @@ class ntpq_server(object):
         if (self.when > 120 or offset > 5):
             self.status = "Yellow"
             self.comment = "HiPAT Synchronizing"
-            self.last_fail = datetime.datetime.now()
         else:
             self.status = "Green"
             self.comment = "OK"
