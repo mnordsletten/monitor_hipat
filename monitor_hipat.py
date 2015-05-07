@@ -93,10 +93,13 @@ def print_servers(server_list):
         # If the server has been active or failed the time diff is calculated
         if last_update_string != "Init" and last_update_string[:5] != "Never":
             if delta < datetime.timedelta(seconds=60):  # Delta is below 1 minute
+                last_update_string += str(delta.seconds) + " Second(s)"
             elif delta < datetime.timedelta(seconds=3600): # Delta is below 1 hour
                 last_update_string += str(delta.seconds/60) + " Minute(s)"
             elif delta < datetime.timedelta(days=1):      # Delta is below 1 day
+                last_update_string += str(delta.seconds/3600) + " Hour(s)"
             else:
+                last_update_string += str(delta.days) + " Day(s)"
              
         # Will modify the background colour of the text based on the status used. 
         if server.status == "Green":
@@ -134,6 +137,7 @@ def main():
         time.sleep(4)                                       # Wait 4 seconds for the update to finish
         os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
         print_servers(server_list)                          # Print all the servers
+        time.sleep(5)
         
 if __name__ == '__main__':
     main()
