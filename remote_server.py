@@ -15,6 +15,7 @@ class remote_server(ntpq_server):
         self.net_status = False
         self.cesium_status = False
         self.remote_ip = remote_ip 
+        self.number_of_fails = 0
     
     def __str__(self):
         return ("{0}"
@@ -29,24 +30,29 @@ class remote_server(ntpq_server):
                                                 
     def find_status(self):
         """Will process that status using the extra information available in remote_server. hipat_status, net_status and
-        cesium_status will all be used.
+        cesium_status will all be used. To prevent last_fail getting updated due to single instance failures such as small network
+        hiccups a variable called number_of_fails will 
         
         returns: None
         """
         if not self.net_status:                             # If the server is not reachable
             self.status = "Red"
             self.comment = "Net fail"
-            self.last_fail = datetime.datetime.now()
+            self.number_of_fails += 1                       # Will need to fail 3 times to set last_fail
         elif not self.hipat_status:                         # If the server is reachable, but no ntpq output is available
             self.status = "Red"
             self.comment = "HiPAT fail"
-            self.last_fail = datetime.datetime.now()
+            self.number_of_fails += 1                       # Will need to fail 3 times to set last_fail
         elif not self.cesium_status:                        # If the server is reachable, but the cesium is not performing as expected
             self.status = "Red"
             self.comment = "No response from remote Cesium"   
-            self.last_fail = datetime.datetime.now()
+            self.number_of_fails += 1                       # Will need to fail 3 times to set last_fail
         elif self.status == "Green":                        # If the status has been marked green and not failed any other test last_active is updated
-            self.last_active = datetime.datetime.now()     
+            self.last_active = datetime.datetime.now() 
+            self.number_of_fails = 0    
+        
+        if self.number_of_fails > 3:
+            self.last_fail = datetime.datetime.now()
         return  
     	 
     def update(self):

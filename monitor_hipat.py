@@ -51,6 +51,7 @@ def find_servers():
             server_instance = local_server(ip_address = new_server)
         server_objects.append(server_instance)
     
+    s.close()
     return server_objects 
 
 def print_servers(server_list):
@@ -153,18 +154,19 @@ def print_servers(server_list):
 def main():
     # Get a list of servers
     server_list = find_servers()
-    s = shelve.open('shelvefile')
     
     while(True):
         # Create threads for every server so that the updates happen at the same time
         for server in server_list:
             thread_update = myThread(server)    
-            thread_update.start()   
-        time.sleep(4)                                       # Wait 4 seconds for the update to finish
+            thread_update.start()
+        time.sleep(5)
         os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
         print_servers(server_list)                          # Print all the servers
         time.sleep(5)
+        s = shelve.open('shelvefile')
         s["server_list"] = server_list
+        s.close()
          
 if __name__ == '__main__':
     main()
