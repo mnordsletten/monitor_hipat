@@ -13,6 +13,7 @@ import subprocess
 import re
 import time
 import os
+import shelve
 
 """	monitor_hipat.py will create an overview over the status of the hipat system.
 """
@@ -20,9 +21,14 @@ import os
 def find_servers():
     """ Finds out of the server is either remote or local. Then based on the result, makes a list of IP-addresses. 
     server_objects are created from the IP-adresses and returned as a list. 
+    Will now also import previously used servers from a shelvefile. Will update the name and possible remote ip for a new server.
     
     returns: list of server objects
 	"""
+    s = shelve.open('shelvefile')
+    if not s.__contains__("server_list"):
+        s["server_list"] = []
+    
     if config["remote_status"] == "remote":
         server_ips = config['ip_address']   # List of lists containing server_ip and server_name
     elif config["remote_status"] == "local":
@@ -31,11 +37,18 @@ def find_servers():
         server_ips = re.findall(regex, ntpq_output, re.MULTILINE)
     
     server_objects = []
-    for server in server_ips:
-        if config["remote_status"] == "remote":
-            server_instance = remote_server(ip_address = server[0], name = server[1], remote_ip = server[2])
+    for new_server in server_ips:
+        previously_stored = False
+        for stored_server in s["server_list"]:
+            if new_server[0] == stored_server.ip_address:
+                stored_server.name = new_server[1]
+                stored_server.remote_ip = new_server[2]
+                server_instance = stored_server
+                previously_stored = True
+        if config["remote_status"] == "remote" and not previously_stored:
+            server_instance = remote_server(ip_address = new_server[0], name = new_server[1], remote_ip = new_server[2])
         elif config["remote_status"] == "local":
-            server_instance = local_server(ip_address = server)
+            server_instance = local_server(ip_address = new_server)
         server_objects.append(server_instance)
     
     return server_objects 
@@ -140,6 +153,7 @@ def print_servers(server_list):
 def main():
     # Get a list of servers
     server_list = find_servers()
+    s = shelve.open('shelvefile')
     
     while(True):
         # Create threads for every server so that the updates happen at the same time
@@ -150,6 +164,7 @@ def main():
         os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
         print_servers(server_list)                          # Print all the servers
         time.sleep(5)
-        
+        s["server_list"] = server_list
+         
 if __name__ == '__main__':
     main()
