@@ -14,6 +14,7 @@ import re
 import time
 import os
 import shelve
+import socket
 
 """	monitor_hipat.py will create an overview over the status of the hipat system.
 """
@@ -25,7 +26,7 @@ def find_servers():
     
     returns: list of server objects
 	"""
-    s = shelve.open('shelvefile')
+    s = shelve.open('shelvefile.db')
     if not s.__contains__("server_list"):
         s["server_list"] = []
     
@@ -59,7 +60,7 @@ def print_servers(server_list):
     server_list: list containing the ntpq_server objects.
     """ 
 
-    server_list.sort(key=lambda y: y.ip_address)   # Sorting list with last_fail first
+    server_list.sort(key=lambda y: socket.inet_aton(y.ip_address))   # Sorting list with last_fail first
     
     # To ensure the print output is formatted correctly a few operations are performed:
     # 1. Minimum string lengths are saved in string_lengths, this is the length of the headers
@@ -164,7 +165,7 @@ def main():
         os.system('cls' if os.name == 'nt' else 'clear')    # Clear the screen before the next print
         print_servers(server_list)                          # Print all the servers
         time.sleep(5)
-        s = shelve.open('shelvefile')
+        s = shelve.open('shelvefile.db')
         s["server_list"] = server_list
         s.close()
          
